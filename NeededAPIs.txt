@@ -1,0 +1,7 @@
+Google Distance Matrix: https://developers.google.com/maps/documentation/distance-matrix/intro
+-for finding the 
+
+Google Places: https://developers.google.com/places/web-service/intro
+-for retrieving current device location
+-for retrieving food location
+-for retrieving review/rating/cost
