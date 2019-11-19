@@ -159,6 +159,8 @@ for i in range(len(results_part)):
 # print(get_score(8))
 # pprint.pprint(results_part[8])
 
+# where I learned to use operator
+# https://stackoverflow.com/questions/613183/how-do-i-sort-a-dictionary-by-value
 # print(type(scores))
 sorted_scores = sorted(scores.items(), key=operator.itemgetter(1))
 
