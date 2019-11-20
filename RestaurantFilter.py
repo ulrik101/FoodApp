@@ -33,7 +33,7 @@ resultsReverse = gmapsKey.reverse_geocode((33.7867326,-117.8428536999999))
 
 
 #accessing a variable within json
-print(resultsReverse[0]["address_components"][0]["long_name"])
+# print(resultsReverse[0]["address_components"][0]["long_name"])
 
 #my stuff here
 
@@ -49,11 +49,10 @@ import pprint
 import operator
 
 
-ranging = 800
-print(lat)
-print(lng)
+# print(lat)
+# print(lng)
 
-#ranging = int(input("What is the range you would like to view restaurants within (in meters)? "))
+ranging = int(input("What is the range you would like to view restaurants within (in meters)? "))
 # I will add a feature later that allows the user to pick to input in their location in km and mi****
 # I would also like to include bar and cafe but I can only use one tupe
 coordinates = str(lat)+","+str(lng)
