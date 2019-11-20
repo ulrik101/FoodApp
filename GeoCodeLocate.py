@@ -30,3 +30,4 @@ print(coord1.getLocation())
 #accessing a variable within json
 #print("Nearby address")
 #print(resultsReverse[0]["address_components"][0]["long_name"])
+
