@@ -82,7 +82,6 @@ variables I want in results:
 # print([3]['price_level'])
 
 # place_id uniquely identifies a place can be used for dicitonary
-results_part = places_result['results']
 
 #print(results_part[0].keys())
 #print(results_part[0]['id'])
@@ -127,8 +126,16 @@ def get_score (restaurant_number):
 
 # print(places_result)
 # I am commenting this out because it will create more GET requests during testing and we don't want to be charged
-# time.sleep(3)
-# places_result = gmapsKey.places_nearby(page_token = places_result('next_page_token'))
+# gets the next 20 results (if any)
+
+# https://stackoverflow.com/questions/50704611/next-page-token-google-places
+
+#while places_result.has_next_page_token:
+#time.sleep(3)
+#places_result = gmapsKey.places_nearby(page_token = places_result['next_page_token'])
+
+results_part = places_result['results']
+
 
 # print(results_part[0].keys())
 
