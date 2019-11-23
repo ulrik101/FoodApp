@@ -8,19 +8,24 @@ import responses
 
 class Location:
 	def __init__(self):
-		self.gmapsKey = googlemaps.Client(key='AIzaSyAt0viCrbReQdXUR00mG4DPWucra5_xx8Y')
-		self.results = self.gmapsKey.geolocate()
-	def getLocation(self):
+		self.gmaps_key = googlemaps.Client(key='AIzaSyAt0viCrbReQdXUR00mG4DPWucra5_xx8Y')
+		self.results = self.gmaps_key.geolocate()
+	
+	def get_location(self):
 		#accessing individual coords
 		lat = self.results["location"]["lat"]
 		lng = self.results["location"]["lng"]
 		coords = (lat,lng)
 
 		return coords
-coord1=Location()
-test=coord1.getLocation()
-print(coord1.getLocation())
+	def get_gmaps_key(self):
+		return self.gmaps_key
 
+"""
+coord1=Location()
+test=coord1.get_location()
+print(coord1.get_location())
+"""
 #JSON TABLE EXAMPLE BELOW
 #https://maps.googleapis.com/maps/api/geocode/json?latlng=33.7867326,-117.8428536999999&key=AIzaSyAt0viCrbReQdXUR00mG4DPWucra5_xx8Y
 
