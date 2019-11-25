@@ -7,8 +7,17 @@ __Installment Instructions:__
 _If you still need to download python3 type:_
 > sudo apt install python3
 
+_Install Required Packages/Libraries:_
+> pip install googlemaps
+> pip install responses
+
 _To clone the git repository type:_
 > git clone https://github.com/ulrik101/FoodApp.git
 
-_To run and compile the code type:_
+_To run and compile the code type the following commands.
+ResturantFilter.py returns the results for three nearby restaurants.
+GeoCodeLocate.py returns the current coordinates.
+No input is taken from the user yet while everything is developed.:_
+
 > python3 RestaurantFilter.py
+> python3 GeoCodeLocate.py
