@@ -8,8 +8,9 @@ _If you still need to download python3 type:_
 > sudo apt install python3
 
 _Install Required Packages/Libraries:_
-> pip install googlemaps
-> pip install responses
+> pip3 install googlemaps
+
+> pip3 install responses
 
 _To clone the git repository type:_
 > git clone https://github.com/ulrik101/FoodApp.git
