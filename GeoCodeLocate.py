@@ -7,6 +7,7 @@ class Location:
         self.gmaps_key = googlemaps.Client(key=passkey)
         self.results = self.gmaps_key.geolocate()
 
+    # returns the latitude and longitude of the users current position
     def get_location(self):
         # accessing individual coords
         lat = self.results["location"]["lat"]
@@ -14,6 +15,7 @@ class Location:
         coords = (lat, lng)
         return coords
 
+    # an accessor function that returns the api object with the key inside
     def get_gmaps_key(self):
         return self.gmaps_key
 
