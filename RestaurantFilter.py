@@ -1,67 +1,3 @@
-import googlemaps
-import responses
-
-# we will eventualy need to use datetime for
-# making sure the restaurants will be open when the user
-# is on the app
-from datetime import datetime
-
-gmapsKey = googlemaps.Client(key='AIzaSyAt0viCrbReQdXUR00mG4DPWucra5_xx8Y')
-responses.add(responses.POST,
-              'https://www.googleapis.com/geolocation/v1/geolocate',
-              body='{"location": {"lat": 51.0,"lng": -0.1},"accuracy": 1200.4}',
-              status=200,
-              content_type='application/json')
-
-
-results = gmapsKey.geolocate()
-
-#accessing individual coords
-lat = results["location"]["lat"]
-lng = results["location"]["lng"]
-#print(results)
-
-
-#JSON TABLE BELOW
-#https://maps.googleapis.com/maps/api/geocode/json?latlng=33.7867326,-117.8428536999999&key=AIzaSyAt0viCrbReQdXUR00mG4DPWucra5_xx8Y
-responses.add(responses.GET,
-                      'https://maps.googleapis.com/maps/api/geocode/json',
-                      body='{"status":"OK","results":[]}',
-                      status=200,
-content_type='application/json')
-resultsReverse = gmapsKey.reverse_geocode((33.7867326,-117.8428536999999))
-
-
-#accessing a variable within json
-print(resultsReverse[0]["address_components"][0]["long_name"])
-
-#my stuff here
-
-# I used information from this part
-# https://www.youtube.com/watch?v=qkSmuquMueA
-
-
-#  range = input('How far would like to search within your current location (in meters): ')
-
-# eventually get rid of the next three lines they are for debugging purposes****
-import time
-import pprint
-import operator
-
-
-ranging = 800
-print(lat)
-print(lng)
-
-#ranging = int(input("What is the range you would like to view restaurants within (in meters)? "))
-# I will add a feature later that allows the user to pick to input in their location in km and mi****
-# I would also like to include bar and cafe but I can only use one tupe
-coordinates = str(lat)+","+str(lng)
-
-# change back to True
-
-places_result = gmapsKey.places_nearby(location = coordinates, radius = ranging, open_now = True, type = 'restaurant')
-
 """
 variables I want in results:
 
@@ -72,119 +8,125 @@ variables I want in results:
 'user_ratings_total'
 'vicinity' --like address
 
+gives back a dictionary of lists of dictionaries and now I am just parsing thorught that
 """
 
-# gives back a dictionary of lists of dictionaries and now I am just parsing thorught that
+import time
+import operator
+from GeoCodeLocate import Location
 
-# print(str(places_result['results'][i]['price_level']))
+class Filter:
 
-# print(places_result['results'][1]['price_level'])
+    def __init__(self):
+        self.maps = Location()
+        self.latitude, self.longitude = self.maps.get_location()
+        self.coordinates = str(self.latitude)+","+str(self.longitude)
+        self.api_key = self.maps.get_gmaps_key()
+        self.places_result = []
+        self.descriptions = {}
+        self.scores = {}
+        self.results_part = []
+        self.sorted_scores = []
 
-# print([3]['price_level'])
+    def fill_places(self, ranging):
 
-# place_id uniquely identifies a place can be used for dicitonary
-results_part = places_result['results']
+        self.places_result.append(self.api_key.places_nearby(location = self.coordinates, radius = ranging, open_now = True, type = 'restaurant'))
+        count = 0
 
-#print(results_part[0].keys())
-#print(results_part[0]['id'])
-#print(type(results_part[0]['id']))
+        while 'next_page_token' in self.places_result[count].keys():
+            #pprint.pprint(places_result[count]['next_page_token'])
+            
+            count = count + 1
+            time.sleep(3)
+            self.places_result.append(self.api_key.places_nearby(page_token = self.places_result[count-1]['next_page_token']))
 
+        for i in self.places_result:
+            self.results_part.extend(i['results'])
 
-def get_description (restaurant_number):
-    
-    #create try catches for every space 
-    description = results_part[restaurant_number]['name'] + "\n"
-    
-    description += "at: " + results_part[restaurant_number]['vicinity'] + "\n"
+    def get_description (self, restaurant_number):
+        #create try catches for every space 
+        description = self.results_part[restaurant_number]['name'] + "\n"
+        description += "at: " + self.results_part[restaurant_number]['vicinity'] + "\n"
+        try:
+            description += "price level: " + str(self.results_part[restaurant_number]['price_level']) + "\n"
+        except:
+            description += "no price level stated\n"
+        finally:
+            description += "has a rating of " + str(self.results_part[restaurant_number]['rating']) + " stars\n"
+            description += "with " + str(self.results_part[restaurant_number]['user_ratings_total'])
+            
+            if self.results_part[restaurant_number]['user_ratings_total'] == 1:
+                description += str(" review")
+            else:
+                description += str(" reviews")
+            return description
 
-    try:
-        description += "price level: " + str(results_part[restaurant_number]['price_level']) + "\n"
-    except:
-        description += "no price level stated\n"
-    finally:
-        description += "has a rating of " + str(results_part[restaurant_number]['rating']) + " stars\n"
+    def get_score (self, restaurant_number):
+
+        # the price level is a missing value the try catch block will try to account for that 
+        try:
+            useful_price_level = self.results_part[restaurant_number]['price_level']
+        except:
+            useful_price_level = 5
+        finally:
+            amount_ratings = self.results_part[restaurant_number]['user_ratings_total']
+            star_rating = self.results_part[restaurant_number]['rating']
+            score = (amount_ratings * star_rating) / (useful_price_level + 1)
+            return score
+
+    def fill_dictionaries(self):
+        for i in range(len(self.results_part)):
+            identification = self.results_part[i]['id']
+
+            self.descriptions[identification] = self.get_description(i)
+            self.scores[identification] = self.get_score(i)
+
+    def print_all_as_sorted(self):
+        # sorted score is now a list of tuples
+        # sorting based on scores rating formula created
+
+        self.sorted_scores = sorted(self.scores.items(), key=operator.itemgetter(1), reverse = True)
+        for i in range(len(self.sorted_scores)):
+            identification = self.sorted_scores[i][0]
+
+            count = i + 1
+            print(count,".")
+            print(self.descriptions[identification])
+            print("has a rating of ", self.sorted_scores[i][1])
+            print()
+
+    # this is for food with a price_level of 0
+    def only_free_food(self):
+        self.scores = {}
+        self.descriptions = {}
+        self.sorted_scores = []
+        results_part2 = []
+        for i in range(len(self.results_part)):
+            # some don't have price_levels
+            try:
+                if self.results_part[i]['price_level'] == 0:
+                    results_part2.append(self.results_part[i])
+            except:
+                pass
+        if len(results_part2) != 0:
+            self.results_part = results_part2
+            self.fill_dictionaries()
+            self.print_all_as_sorted()
+        else:
+            print("There were no restaurants in your radius with the price level being 0")
         
-        description += "with " + str(results_part[restaurant_number]['user_ratings_total']) + " reviews"
-        
-        return description
-
-def get_score (restaurant_number):
-
-    # the price level is a missing value the try catch block will try to account for that 
-    
-    try:
-        useful_price_level = results_part[restaurant_number]['price_level']
-    except:
-        useful_price_level = 5
-    finally:
-        amount_ratings = results_part[restaurant_number]['user_ratings_total']
-        star_rating = results_part[restaurant_number]['rating']
-        score = (amount_ratings * star_rating) / (useful_price_level + 1)
-        return score
-    
-
-    #pprint.pprint(places_result['results'][i])#['price_level'])#['results'])
+    def rank (self, ranging):
+        self.fill_places(ranging)
+        self.fill_dictionaries()
+        self.print_all_as_sorted()
+        return len(self.sorted_scores) != 0
 
 
-# print(places_result)
-# I am commenting this out because it will create more GET requests during testing and we don't want to be charged
-# time.sleep(3)
-# places_result = gmapsKey.places_nearby(page_token = places_result('next_page_token'))
-
-# print(results_part[0].keys())
-
-#connects the id
-descriptions = {}
-scores = {}
-
-
-# print(len(results_part))
-for i in range(len(results_part)):
-    
-    identification = results_part[i]['id']
-
-    descriptions[identification] = get_description(i)
-    scores[identification] = get_score(i)
-
-
-
-    # print(i)
-    # pprint.pprint(results_part[i])
-    # print(get_description(i),"\n") 
-
-# sorting based on scores rating formula created
-
-
-# print(get_description(8))
-# print(get_score(8))
-# pprint.pprint(results_part[8])
-
+# I used information from this part
+# https://www.youtube.com/watch?v=qkSmuquMueA
 # where I learned to use operator
 # https://stackoverflow.com/questions/613183/how-do-i-sort-a-dictionary-by-value
-# print(type(scores))
-sorted_scores = sorted(scores.items(), key=operator.itemgetter(1))
 
-# print(sorted_scores[0][0])
+# https://stackoverflow.com/questions/50704611/next-page-token-google-places
 
-"""
-print(sorted_scores.keys())
-for i in sorted_scores.keys():
-    print(sorted_scores[i])
-"""
-# pprint.pprint(sorted_scores)
 
-for i in range(len(sorted_scores)):
-    identification = sorted_scores[i][0]
-
-    count = i + 1
-    print(count,".")
-    print(descriptions[identification])
-    print("has a rating of ", sorted_scores[i][1])
-    print()
-
-#don't forget to flake8 this program
-
-#this filei is so I don't messup GeoCodeLocate.py
-
-# don't forget to Flake8
-# for the last part last part lets do the price_level == 0
