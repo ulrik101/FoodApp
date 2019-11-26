@@ -20,6 +20,7 @@ ResturantFilter.py returns the results for three nearby restaurants.
 GeoCodeLocate.py returns the current coordinates.
 No input is taken from the user yet while everything is developed.:_
 
-> python3 RestaurantFilter.py
 
 > python3 GeoCodeLocate.py
+> python3 RestaurantFilter.py
+> python3 RestaurantRanker.py
