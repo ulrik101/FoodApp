@@ -17,9 +17,3 @@ Sprint #3
 * figured out the object oriented programming for RestaurantFilter.py
 * figured out the onject oriented programming for RestaurantRanker.py
 * figured out how to find where the price level = 0
-
-https://www.youtube.com/watch?v=qkSmuquMueA  
-where I learned to use operator  
-https://stackoverflow.com/questions/613183/how-do-i-sort-a-dictionary-by-value  
-https://stackoverflow.com/questions/50704611/next-page-token-google-places  
-
