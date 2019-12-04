@@ -1,6 +1,6 @@
 # FoodApp
 
-We would like to make a program that uses Google Maps to help users find a restaurant. People are usually willing to spend more for higher quality food and less for lower quality food. We will use this idea to rank restaurants for people as a ratio of price and review ratings.  
+We made a program that uses Google Maps to help users find a restaurant. People are usually willing to spend more for higher quality food and less for lower quality food. We will use this idea to rank restaurants for people as a ratio of review ratings and prices.  
 __Installment Instructions:__
 
 _If you still need to download python3 type:_
