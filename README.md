@@ -21,7 +21,7 @@ GeoCodeLocate.py returns the current coordinates.
 RestaurantRanker.py give proper information from the user to the other two .py files  
 
 After that, to use the program input the radius (in meters) around you would that you would like to search  
-for restaurants within. Then type yes if you want to see a list of free food rankings. When tested though we never  
+for restaurants within. Then type _yes_ if you want to see a list of free food rankings. When tested though we never  
 found any free food.  
 
 Also to note, if you are a Windows user I recommend that you run it in PowerShell over  
