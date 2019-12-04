@@ -33,5 +33,5 @@ On Windows 10 Home we could thouroughly test our Dockerfile but it should work l
 after cloning this repository  
 go to it in you docker terminal  
 then,  
-> docker build .
+> docker build .  
 > docker run .
