@@ -31,9 +31,12 @@ class Filter:
         self.sorted_scores = []
 
     def fill_places(self, ranging):
-        self.places_result.append(self.api_key.places_nearby
-                                  (location=self.coordinates, radius=ranging,
-                                   open_now=True, type='restaurant'))
+
+        initial_page = self.api_key.places_nearby(location=self.coordinates,
+                                                  radius=ranging,
+                                                  open_now=True,
+                                                  type='restaurant')
+        self.places_result.append(initial_page)
         count = 0
 
         while 'next_page_token' in self.places_result[count].keys():
@@ -41,52 +44,49 @@ class Filter:
 
             count = count + 1
             time.sleep(3)
-            self.places_result.append
-            (self.api_key.places_nearb
-             (page_token=self.places_result[count-1]['next_page_token']))
+            page = self.places_result[count-1]['next_page_token']
+            next_places = self.api_key.places_nearby(page_token=page)
+            self.places_result.append(next_places)
 
         for i in self.places_result:
             self.results_part.extend(i['results'])
 
-    def get_description(self, restaurant_number):
+    def get_description(self, number):
         # create try catches for every space
-        description = self.results_part[restaurant_number]
-        ['name'] + "\n"
-        description += "at: " + self.results_part
-        [restaurant_number]['vicinity'] + "\n"
+        description = self.results_part[number]['name'] + "\n"
+        vicinity = self.results_part[number]['vicinity']
+        description += "at: " + vicinity + "\n"
         try:
-            description += "price level: " + str(self.results_part
-                                                 [restaurant_number]
-                                                 ['price_level']) + "\n"
+            price_level = self.results_part[number]['price_level']
+            price_level = str(price_level)
+            description += "price level: " + price_level + "\n"
         except Exception:
             description += "no price level stated\n"
         finally:
-            description += "has a rating of " + str(self.results_part
-                                                    [restaurant_number]
-                                                    ['rating']) + " stars\n"
-            description += "with " + str(self.results_part
-                                         [restaurant_number]
-                                         ['user_ratings_total'])
+            rating = str(self.results_part[number]['rating'])
+            description += "has a rating of " + rating + " stars\n"
 
-            if self.results_part[restaurant_number]['user_ratings_total'] == 1:
+            total_ratings = self.results_part[number]['user_ratings_total']
+            total_ratings = str(total_ratings)
+            description += "with " + total_ratings
+
+            if self.results_part[number]['user_ratings_total'] == 1:
                 description += str(" review")
             else:
                 description += str(" reviews")
             return description
 
-    def get_score(self, restaurant_number):
+    def get_score(self, number):
 
         # the price level is a missing value the try catch
         # block will try to account for that
         try:
-            useful_price_level = self.results_part[
-                                      restaurant_number]['price_level']
+            useful_price_level = self.results_part[number]['price_level']
         except Exception:
             useful_price_level = 5
         finally:
-            amount_ratings = self.results_part[restaurant_number][
-                                  'user_ratings_total']
-            star_rating = self.results_part[restaurant_number]['rating']
+            amount_ratings = self.results_part[number]['user_ratings_total']
+            star_rating = self.results_part[number]['rating']
             score = (amount_ratings * star_rating) / (useful_price_level + 1)
             return score
 
@@ -100,10 +100,9 @@ class Filter:
     def print_all_as_sorted(self):
         # sorted score is now a list of tuples
         # sorting based on scores rating formula created
-
-        self.sorted_scores = sorted(self.scores.items(),
-                                    key=operator.itemgetter(1),
-                                    reverse=True)
+        key1 = operator.itemgetter(1)
+        score_items = self.scores.items()
+        self.sorted_scores = sorted(score_items, key=key1, reverse=True)
         for i in range(len(self.sorted_scores)):
             identification = self.sorted_scores[i][0]
             count = i + 1
