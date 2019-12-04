@@ -18,8 +18,9 @@ _To run and compile the code type the following commands._
 > python3 RestaurantRanker.py 
 
 _Other information:_  
-ResturantFilter.py returns the results for three nearby restaurants.  
+ResturantFilter.py returns the results for up to 60 nearby restaurants.  
 GeoCodeLocate.py returns the current coordinates.  
 RestaurantRanker.py give proper information from the user to the other two .py files  
+  
 Also to note, if you are a Windows user I recommend that you run it in PowerShell over  
 command prompt to allow for better scrolling
