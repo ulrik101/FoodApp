@@ -28,3 +28,10 @@ found any free food.
 
 Also to note, if you are a Windows user I recommend that you run it in PowerShell over  
 Command Prompt to allow for better scrolling
+
+On Windows 10 Home we could thouroughly test our Dockerfile but it should work like: 
+after cloning this repository  
+go to it in you docker terminal  
+then,  
+> docker build .
+> docker run .
