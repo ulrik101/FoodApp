@@ -23,4 +23,4 @@ GeoCodeLocate.py returns the current coordinates.
 RestaurantRanker.py give proper information from the user to the other two .py files  
   
 Also to note, if you are a Windows user I recommend that you run it in PowerShell over  
-command prompt to allow for better scrolling
+Command Prompt to allow for better scrolling
