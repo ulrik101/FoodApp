@@ -18,3 +18,4 @@ Sprint #3
 * figured out the onject oriented programming for RestaurantRanker.py
 * figured out how to find where the price level = 0
 * linting
+* elevator pitch
